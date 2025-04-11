@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  gateway:
+    build: ./node-core
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_REGISTRY_DSN=postgres://postgres:password@db:5432/plugins
+      - CONSUL_ADDR=consul:8500
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_OWNER=${GITHUB_OWNER}
+      - GITHUB_REPO=${GITHUB_REPO}
+    depends_on:
+      - db
+      - consul
+      - auth-plugin
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=plugins
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  consul:
+    image: consul:1.9
+    ports:
+      - "8500:8500"
+    command: "agent -dev -client=0.0.0.0"
+
+  auth-plugin:
+    build: ./spring-plugins/auth-plugin
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_APPLICATION_NAME=auth-plugin
+
+volumes:
+  pg_data:

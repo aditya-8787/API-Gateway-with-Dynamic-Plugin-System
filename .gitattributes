@@ -1,2 +1,10 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# Force JavaScript detection for .js files
+*.js linguist-language=JavaScript
+
+# Force Java detection for .java files
+*.java linguist-language=Java
+
+# Ignore config files
+docker-compose.yml linguist-detectable=false
+*.yaml linguist-detectable=false
+*.yml linguist-detectable=false
